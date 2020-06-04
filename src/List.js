@@ -7,6 +7,7 @@ import {
   Chip,
   Typography,
   CircularProgress,
+  Button,
 } from '@material-ui/core'
 import StarIcon from '@material-ui/icons/Star'
 
@@ -18,10 +19,11 @@ const useStyles = makeStyles((theme) => ({
   },
   listItem: {
     border: '1px solid lightgrey',
-    marginBottom: '1rem',
+    marginBottom: '1.5rem',
   },
   link: {
     textDecoration: 'none',
+    width: '100%',
   },
   title: {
     marginBottom: '1rem',
@@ -34,6 +36,18 @@ const useStyles = makeStyles((theme) => ({
     verticalAlign: 'middle',
     width: '1rem',
     transform: 'translateY(-2px)',
+  },
+  starButton: {
+    marginLeft: '1rem',
+    width: '8rem',
+    flexShrink: '0',
+  },
+  itemContent: {
+    display: 'flex',
+    alignItems: 'flex-end',
+  },
+  itemDescription: {
+    flexGrow: '1',
   },
   progress: {
     display: 'block',
@@ -53,7 +67,7 @@ function ListItemLink(props) {
 }
 
 export default function FolderList(props) {
-  const { data, loading } = props
+  const { data, loading, onStarClick, starred } = props
   const classes = useStyles()
 
   if (loading) {
@@ -66,8 +80,8 @@ export default function FolderList(props) {
         <div>No data was found with your selected options</div>
       )}
       {data.map(
-        ({ name, stargazers_count, description, svn_url, language }, i) => (
-          <ListItemLink href={svn_url} key={i}>
+        ({ name, stargazers_count, description, svn_url, language, id }) => (
+          <ListItemLink href={svn_url} key={id}>
             <ListItemText
               primary={
                 <>
@@ -82,30 +96,47 @@ export default function FolderList(props) {
                       className={classes.chip}
                       label={
                         <>
-                          <span>{stargazers_count}</span>
+                          <span>
+                            {stargazers_count + (starred.includes(id) ? 1 : 0)}
+                          </span>
                           <StarIcon color="error" className={classes.star} />
                         </>
                       }
                     />
+                    {language && (
+                      <Chip
+                        component="span"
+                        className={classes.chip}
+                        label={<span>{language}</span>}
+                      />
+                    )}
                   </Typography>
                 </>
               }
+              secondaryTypographyProps={{ className: classes.itemContent }}
               secondary={
                 <>
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    className={classes.inline}
-                    color="textPrimary"
+                  <span className={classes.itemDescription}>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      className={classes.inline}
+                      color="textPrimary"
+                    >
+                      {description || 'No description.'}
+                    </Typography>
+                  </span>
+                  <Button
+                    className={classes.starButton}
+                    variant="contained"
+                    color="primary"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      onStarClick(id)
+                    }}
                   >
-                    {description || 'No description.'}
-                  </Typography>
-                  {language && (
-                    <Chip
-                      className={classes.chip}
-                      label={<span>{language}</span>}
-                    />
-                  )}
+                    {starred.includes(id) ? 'Starred' : 'Star'}
+                  </Button>
                 </>
               }
             />

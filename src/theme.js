@@ -3,6 +3,13 @@ import { createMuiTheme } from '@material-ui/core/styles'
 
 // A custom theme for this app
 const theme = createMuiTheme({
+  props: {
+    // Name of the component ⚛️
+    MuiButtonBase: {
+      // The properties to apply
+      disableRipple: true, // No more ripple, on the whole application 💣!
+    },
+  },
   palette: {
     primary: {
       main: '#556cd6',
