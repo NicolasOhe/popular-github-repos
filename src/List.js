@@ -69,7 +69,7 @@ function ListItemLink(props) {
 export default function FolderList(props) {
   const { data, loading, onStarClick, starred } = props
   const classes = useStyles()
-  console.log(data)
+
   if (loading) {
     return <CircularProgress className={classes.progress} />
   }
@@ -77,7 +77,14 @@ export default function FolderList(props) {
   return (
     <List className={classes.root}>
       {data.length === 0 && (
-        <div>No data was found with your selected options</div>
+        <Typography
+          component="h5"
+          variant="h5"
+          className={classes.title}
+          color="textPrimary"
+        >
+          No data.
+        </Typography>
       )}
       {data.map(
         ({

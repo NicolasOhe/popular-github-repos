@@ -10,25 +10,39 @@ import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
+import { set } from 'date-fns'
 
 export default function App() {
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedDate, setSelectedDate] = React.useState(
+    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  )
+  const [selectedLanguages, setSelectedLanguages] = React.useState([])
 
   useEffect(() => {
-    // format to YYYY-MM-DD
-    const oneWeekAgo = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split('T')[0]
+    getPopularRepos()
+  }, [selectedDate, selectedLanguages])
 
+  function getPopularRepos() {
+    setLoading(true)
+    // YYYY-MM-DD
+    const formattedDate = new Date(selectedDate).toISOString().split('T')[0]
+
+    const dateQuery = `created:>${formattedDate}`
+    const languagesQuery = selectedLanguages.length
+      ? selectedLanguages
+          .map((l) => `+language:${encodeURIComponent(l)}`)
+          .join('')
+      : ''
     fetch(
-      `https://api.github.com/search/repositories?q=created:>${oneWeekAgo}&sort=stars&order=desc&per_page=10 `
+      `https://api.github.com/search/repositories?q=${dateQuery}${languagesQuery}&sort=stars&order=desc&per_page=20 `
     )
       .then((res) => res.json())
       .then((data) => setResults(data.items))
       .catch((e) => console.error(e))
       .finally(() => setLoading(false))
-  }, [])
+  }
 
   const [starred, setStarred] = useState([])
 
@@ -132,12 +146,11 @@ export default function App() {
   )
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="md">
       <Box my={4}>
         <Typography variant="h3" component="h1" gutterBottom align="center">
           Trending GitHub repositories
         </Typography>
-        {/* <ProTip /> */}
 
         <Tabs
           value={value}
@@ -159,7 +172,12 @@ export default function App() {
         </Tabs>
 
         <TabPanel value={value} index="trending">
-          <Settings />
+          <Settings
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            selectedLanguages={selectedLanguages}
+            setSelectedLanguages={setSelectedLanguages}
+          />
           <List
             data={results}
             loading={loading}
