@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
+import StarIcon from '@material-ui/icons/Star'
 import {
   List,
   ListItem,
@@ -9,7 +10,6 @@ import {
   CircularProgress,
   Button,
 } from '@material-ui/core'
-import StarIcon from '@material-ui/icons/Star'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,7 +69,7 @@ function ListItemLink(props) {
 export default function FolderList(props) {
   const { data, loading, onStarClick, starred } = props
   const classes = useStyles()
-
+  console.log(data)
   if (loading) {
     return <CircularProgress className={classes.progress} />
   }
@@ -80,7 +80,15 @@ export default function FolderList(props) {
         <div>No data was found with your selected options</div>
       )}
       {data.map(
-        ({ name, stargazers_count, description, svn_url, language, id }) => (
+        ({
+          name,
+          stargazers_count,
+          description,
+          svn_url,
+          language,
+          id,
+          full_name,
+        }) => (
           <ListItemLink href={svn_url} key={id}>
             <ListItemText
               primary={
@@ -97,7 +105,8 @@ export default function FolderList(props) {
                       label={
                         <>
                           <span>
-                            {stargazers_count + (starred.includes(id) ? 1 : 0)}
+                            {stargazers_count +
+                              (starred.includes(full_name) ? 1 : 0)}
                           </span>
                           <StarIcon color="error" className={classes.star} />
                         </>
@@ -132,10 +141,10 @@ export default function FolderList(props) {
                     color="primary"
                     onClick={(e) => {
                       e.preventDefault()
-                      onStarClick(id)
+                      onStarClick(full_name)
                     }}
                   >
-                    {starred.includes(id) ? 'Starred' : 'Star'}
+                    {starred.includes(full_name) ? 'Starred' : 'Star'}
                   </Button>
                 </>
               }
