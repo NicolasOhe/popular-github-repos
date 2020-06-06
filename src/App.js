@@ -7,112 +7,25 @@ import Copyright from './Copyright'
 import Settings from './Settings'
 import List from './List'
 import { fetchPopularRepos } from './store/actions/repos'
-import { addTodo } from './store/actions'
+import { initStars } from './store/actions/stars'
 
 export default function App() {
+  const dispatch = useDispatch()
+
   const popularRepos = useSelector((state) => state.repos.list)
   const loading = useSelector((state) => state.repos.loading)
 
-  const dispatch = useDispatch()
+  const starred = useSelector((state) => state.stars.starsList)
+  const starredInfos = useSelector((state) => state.stars.starsInfoList)
 
   useEffect(() => {
     dispatch(fetchPopularRepos())
+    dispatch(initStars())
   }, [dispatch])
-
-  const [starred, setStarred] = useState([])
-
-  useEffect(() => {
-    try {
-      const savedStarsString = window.localStorage.getItem('starred')
-      const savedStars = JSON.parse(savedStarsString)
-      setStarred(savedStars)
-    } catch {
-      console.error('Error parsing the starred repos saved in local storage.')
-    }
-  }, [])
-
-  const [starredInfos, setStarredInfos] = useState([])
-
-  useEffect(() => {
-    async function getStarredRepoDetails() {
-      // wait until loading of popular data is done
-      if (loading) {
-        return
-      }
-
-      if (starred.length === 0) {
-        return
-      }
-
-      // retrieve data from popular results: avoids uncessary fetch when repo is starred.
-      const retrievedData = retrieveDataFromPopularResults()
-      setStarredInfos((prev) => [...prev, ...retrievedData])
-
-      // load only the missing pieces
-      const fetchedData = await fetchMissingData(retrievedData)
-      if (fetchedData) {
-        setStarredInfos((prev) => [...prev, ...fetchedData])
-      }
-
-      function getMissingFullnames(object) {
-        const availableStarredfullNames = object.map((el) => el.full_name)
-        const missingStarInfos = starred.filter(
-          (fullName) => !availableStarredfullNames.includes(fullName)
-        )
-        return missingStarInfos
-      }
-
-      function retrieveDataFromPopularResults() {
-        const missingStarInfos = getMissingFullnames(starredInfos)
-        const retrievedData = []
-        const availableReposbyFullName = popularRepos.map(
-          (repo) => repo.full_name
-        )
-        missingStarInfos.forEach((missingInfo) => {
-          if (availableReposbyFullName.includes(missingInfo)) {
-            const repoData = popularRepos.find(
-              (repo) => repo.full_name === missingInfo
-            )
-            retrievedData.push(repoData)
-          }
-        })
-        return retrievedData
-      }
-
-      async function fetchMissingData(retrievedData) {
-        const futureStarredInfos = [...starredInfos, ...retrievedData]
-
-        const missingStarInfos = getMissingFullnames(futureStarredInfos)
-
-        const requests = missingStarInfos.map((fullName) =>
-          fetch(`https://api.github.com/repos/${fullName}`)
-        )
-        try {
-          const rawResponseArray = await Promise.all(requests)
-          const pendingResults = rawResponseArray.map((result) => result.json())
-          const results = await Promise.all(pendingResults)
-          return results
-        } catch (e) {
-          console.error(e)
-        }
-      }
-    }
-    getStarredRepoDetails()
-  }, [starred, loading])
-
-  const toggleStar = (fullName) => {
-    const isRemove = starred.includes(fullName)
-    const updatedStars = isRemove
-      ? starred.filter((el) => el !== fullName)
-      : [...starred, fullName]
-
-    setStarred(updatedStars)
-    window.localStorage.setItem('starred', JSON.stringify(updatedStars))
-  }
 
   const classes = useStyles()
 
-  const [currentTab, setCurrentTab] = React.useState('trending')
+  const [currentTab, setCurrentTab] = useState('trending')
 
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue)
@@ -149,20 +62,10 @@ export default function App() {
 
         <TabPanel value={currentTab} index="trending">
           <Settings />
-          <List
-            data={popularRepos}
-            loading={loading}
-            onStarClick={toggleStar}
-            starred={starred}
-          />
+          <List data={popularRepos} loading={loading} />
         </TabPanel>
         <TabPanel value={currentTab} index="favorites">
-          <List
-            data={starredRepos}
-            loading={loading}
-            onStarClick={toggleStar}
-            starred={starred}
-          />
+          <List data={starredRepos} loading={loading} />
         </TabPanel>
         <Copyright />
       </Box>

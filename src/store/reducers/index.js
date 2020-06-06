@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
-import todos from './todos'
+import stars from './stars'
 import repos from './repos'
 
 export default combineReducers({
   repos,
-  todos,
+  stars,
 })

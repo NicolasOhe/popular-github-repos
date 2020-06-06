@@ -79,12 +79,6 @@ export default function Settings(props) {
   )
   const classes = useStyles()
   const theme = useTheme()
-  // const {
-  //   selectedDate,
-  //   setSelectedDate,
-  //   selectedLanguages,
-  //   setSelectedLanguages,
-  // } = props
 
   const handleLanguageChange = (event) => {
     dispatch(setSelectedLanguages(event.target.value))

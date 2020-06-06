@@ -11,11 +11,11 @@ const initialState = {
   selectedLanguages: [],
 }
 
-const popularRepos = (state = initialState, action) => {
+const popularReposReducer = (state = initialState, action) => {
   switch (action.type) {
-    case actions.ADD_REPOS:
+    case actions.REPOS_ADD:
       return { ...state, list: [...state.list, ...action.data] }
-    case actions.SET_REPOS:
+    case actions.REPOS_SET:
       return {
         ...state,
         list: [...action.data],
@@ -24,17 +24,17 @@ const popularRepos = (state = initialState, action) => {
           return acc
         }, {}),
       }
-    case actions.SET_LOADING:
+    case actions.REPOS_SET_LOADING:
       return { ...state, loading: action.value }
-    case actions.SET_ERROR:
+    case actions.REPOS_SET_ERROR:
       return { ...state, error: action.value }
-    case actions.SET_SELECTED_DATE:
+    case actions.REPOS_SET_SELECTED_DATE:
       return { ...state, selectedDate: action.value }
-    case actions.SET_SELECTED_LANGUAGES:
+    case actions.REPOS_SET_SELECTED_LANGUAGES:
       return { ...state, selectedLanguages: action.value }
     default:
       return state
   }
 }
 
-export default popularRepos
+export default popularReposReducer

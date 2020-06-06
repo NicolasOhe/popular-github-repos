@@ -1,36 +1,36 @@
 import * as actions from './actionTypes'
 
-export const setPopularRepos = (data) => {
+const setPopularRepos = (data) => {
   return {
-    type: actions.SET_REPOS,
+    type: actions.REPOS_SET,
     data,
   }
 }
 
-export const setLoading = (value) => {
+const setLoading = (value) => {
   return {
-    type: actions.SET_LOADING,
+    type: actions.REPOS_SET_LOADING,
     value,
   }
 }
 
-export const setError = (value) => {
+const setError = (value) => {
   return {
-    type: actions.SET_ERROR,
+    type: actions.REPOS_SET_ERROR,
     value,
   }
 }
 
 export const setSelectedDate = (value) => {
   return {
-    type: actions.SET_SELECTED_DATE,
+    type: actions.REPOS_SET_SELECTED_DATE,
     value,
   }
 }
 
 export const setSelectedLanguages = (value) => {
   return {
-    type: actions.SET_SELECTED_LANGUAGES,
+    type: actions.REPOS_SET_SELECTED_LANGUAGES,
     value,
   }
 }

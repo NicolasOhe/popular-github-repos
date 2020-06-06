@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import StarIcon from '@material-ui/icons/Star'
+import { useSelector, useDispatch } from 'react-redux'
 import {
   List,
   ListItem,
@@ -10,6 +11,7 @@ import {
   CircularProgress,
   Button,
 } from '@material-ui/core'
+import { toggleStar } from './store/actions/stars'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,7 +69,10 @@ function ListItemLink(props) {
 }
 
 export default function FolderList(props) {
-  const { data, loading, onStarClick, starred } = props
+  const dispatch = useDispatch()
+  const { data, loading } = props
+  const starred = useSelector((state) => state.stars.starsList)
+  const starredInfos = useSelector((state) => state.stars.starsInfoList)
   const classes = useStyles()
 
   if (loading) {
@@ -148,7 +153,7 @@ export default function FolderList(props) {
                     color="primary"
                     onClick={(e) => {
                       e.preventDefault()
-                      onStarClick(full_name)
+                      dispatch(toggleStar(full_name))
                     }}
                   >
                     {starred.includes(full_name) ? 'Starred' : 'Star'}
