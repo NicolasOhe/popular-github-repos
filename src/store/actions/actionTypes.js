@@ -1,0 +1,6 @@
+export const ADD_REPOS = 'ADD_REPOS'
+export const SET_REPOS = 'SET_REPOS'
+export const SET_LOADING = 'SET_LOADING'
+export const SET_ERROR = 'SET_ERROR'
+export const SET_SELECTED_DATE = 'SET_SELECTED_DATE'
+export const SET_SELECTED_LANGUAGES = 'SET_SELECTED_LANGUAGES'

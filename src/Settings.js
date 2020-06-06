@@ -15,6 +15,12 @@ import {
   Box,
   Grid,
 } from '@material-ui/core'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  setSelectedDate,
+  setSelectedLanguages,
+  fetchPopularRepos,
+} from './store/actions/repos'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,17 +72,28 @@ function getStyles(name, selectedLanguages, theme) {
 }
 
 export default function Settings(props) {
+  const dispatch = useDispatch()
+  const selectedDate = useSelector((state) => state.repos.selectedDate)
+  const selectedLanguages = useSelector(
+    (state) => state.repos.selectedLanguages
+  )
   const classes = useStyles()
   const theme = useTheme()
-  const {
-    selectedDate,
-    setSelectedDate,
-    selectedLanguages,
-    setSelectedLanguages,
-  } = props
+  // const {
+  //   selectedDate,
+  //   setSelectedDate,
+  //   selectedLanguages,
+  //   setSelectedLanguages,
+  // } = props
 
-  const handleChange = (event) => {
-    setSelectedLanguages(event.target.value)
+  const handleLanguageChange = (event) => {
+    dispatch(setSelectedLanguages(event.target.value))
+    dispatch(fetchPopularRepos())
+  }
+
+  const handleDateChange = (date) => {
+    dispatch(setSelectedDate(date))
+    dispatch(fetchPopularRepos())
   }
 
   return (
@@ -89,7 +106,7 @@ export default function Settings(props) {
             label="Show most popular since:"
             format="MM/dd/yyyy"
             value={selectedDate}
-            onChange={setSelectedDate}
+            onChange={handleDateChange}
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
@@ -103,7 +120,7 @@ export default function Settings(props) {
               id="demo-mutiple-name"
               multiple
               value={selectedLanguages}
-              onChange={handleChange}
+              onChange={handleLanguageChange}
               input={<Input />}
               MenuProps={MenuProps}
             >

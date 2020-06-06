@@ -1,48 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
-import Box from '@material-ui/core/Box'
+import { makeStyles } from '@material-ui/core/styles'
+import { Tabs, Tab, Box, Typography, Container } from '@material-ui/core'
+import { useSelector, useDispatch } from 'react-redux'
+
 import Copyright from './Copyright'
-import ProTip from './ProTip'
 import Settings from './Settings'
 import List from './List'
-import { makeStyles } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
-import { set } from 'date-fns'
+import { fetchPopularRepos } from './store/actions/repos'
+import { addTodo } from './store/actions'
 
 export default function App() {
-  const [results, setResults] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [selectedDate, setSelectedDate] = React.useState(
-    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  )
-  const [selectedLanguages, setSelectedLanguages] = React.useState([])
+  const popularRepos = useSelector((state) => state.repos.list)
+  const loading = useSelector((state) => state.repos.loading)
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    getPopularRepos()
-  }, [selectedDate, selectedLanguages])
-
-  function getPopularRepos() {
-    setLoading(true)
-    // YYYY-MM-DD
-    const formattedDate = new Date(selectedDate).toISOString().split('T')[0]
-
-    const dateQuery = `created:>${formattedDate}`
-    const languagesQuery = selectedLanguages.length
-      ? selectedLanguages
-          .map((l) => `+language:${encodeURIComponent(l)}`)
-          .join('')
-      : ''
-    fetch(
-      `https://api.github.com/search/repositories?q=${dateQuery}${languagesQuery}&sort=stars&order=desc&per_page=20 `
-    )
-      .then((res) => res.json())
-      .then((data) => setResults(data.items))
-      .catch((e) => console.error(e))
-      .finally(() => setLoading(false))
-  }
+    dispatch(fetchPopularRepos())
+  }, [dispatch])
 
   const [starred, setStarred] = useState([])
 
@@ -69,13 +44,15 @@ export default function App() {
         return
       }
 
-      // retrieve data from popular results
+      // retrieve data from popular results: avoids uncessary fetch when repo is starred.
       const retrievedData = retrieveDataFromPopularResults()
       setStarredInfos((prev) => [...prev, ...retrievedData])
 
       // load only the missing pieces
       const fetchedData = await fetchMissingData(retrievedData)
-      setStarredInfos((prev) => [...prev, ...fetchedData])
+      if (fetchedData) {
+        setStarredInfos((prev) => [...prev, ...fetchedData])
+      }
 
       function getMissingFullnames(object) {
         const availableStarredfullNames = object.map((el) => el.full_name)
@@ -88,10 +65,12 @@ export default function App() {
       function retrieveDataFromPopularResults() {
         const missingStarInfos = getMissingFullnames(starredInfos)
         const retrievedData = []
-        const availableReposbyFullName = results.map((repo) => repo.full_name)
+        const availableReposbyFullName = popularRepos.map(
+          (repo) => repo.full_name
+        )
         missingStarInfos.forEach((missingInfo) => {
           if (availableReposbyFullName.includes(missingInfo)) {
-            const repoData = results.find(
+            const repoData = popularRepos.find(
               (repo) => repo.full_name === missingInfo
             )
             retrievedData.push(repoData)
@@ -108,17 +87,14 @@ export default function App() {
         const requests = missingStarInfos.map((fullName) =>
           fetch(`https://api.github.com/repos/${fullName}`)
         )
-        // try {
-        const resultsResponse = await Promise.all(requests)
-        console.log('resultsResponse', resultsResponse)
-        //resultsResponse[0].json()
-        const pendingResults = resultsResponse.map((result) => result.json())
-        const results = await Promise.all(pendingResults)
-        // } catch (e) {
-        //   console.log(e)
-        // }
-
-        return results
+        try {
+          const rawResponseArray = await Promise.all(requests)
+          const pendingResults = rawResponseArray.map((result) => result.json())
+          const results = await Promise.all(pendingResults)
+          return results
+        } catch (e) {
+          console.error(e)
+        }
       }
     }
     getStarredRepoDetails()
@@ -136,10 +112,10 @@ export default function App() {
 
   const classes = useStyles()
 
-  const [value, setValue] = React.useState('trending')
+  const [currentTab, setCurrentTab] = React.useState('trending')
 
   const handleTabChange = (event, newValue) => {
-    setValue(newValue)
+    setCurrentTab(newValue)
   }
   const starredRepos = starredInfos.filter((el) =>
     starred.includes(el.full_name)
@@ -153,7 +129,7 @@ export default function App() {
         </Typography>
 
         <Tabs
-          value={value}
+          value={currentTab}
           onChange={handleTabChange}
           aria-label="wrapped label tabs example"
           centered
@@ -171,21 +147,16 @@ export default function App() {
           />
         </Tabs>
 
-        <TabPanel value={value} index="trending">
-          <Settings
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            selectedLanguages={selectedLanguages}
-            setSelectedLanguages={setSelectedLanguages}
-          />
+        <TabPanel value={currentTab} index="trending">
+          <Settings />
           <List
-            data={results}
+            data={popularRepos}
             loading={loading}
             onStarClick={toggleStar}
             starred={starred}
           />
         </TabPanel>
-        <TabPanel value={value} index="favorites">
+        <TabPanel value={currentTab} index="favorites">
           <List
             data={starredRepos}
             loading={loading}
@@ -193,7 +164,6 @@ export default function App() {
             starred={starred}
           />
         </TabPanel>
-
         <Copyright />
       </Box>
     </Container>
