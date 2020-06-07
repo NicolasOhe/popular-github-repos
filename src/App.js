@@ -30,6 +30,7 @@ export default function App() {
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue)
   }
+
   const starredRepos = starredInfos.filter((el) =>
     starred.includes(el.full_name)
   )

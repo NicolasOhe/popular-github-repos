@@ -18,7 +18,6 @@ const starsReducer = (state = initialState, action) => {
         ...state,
         starsList: state.starsList.filter((el) => el !== action.fullName),
       }
-
     case actions.STARS_SET_INFOS:
       return {
         ...state,
