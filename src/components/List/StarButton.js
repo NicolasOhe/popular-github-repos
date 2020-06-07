@@ -3,13 +3,21 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { Button } from '@material-ui/core'
+import StarIcon from '@material-ui/icons/Star'
 import { toggleStar } from '../../store/actions/stars'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginLeft: '1rem',
+    marginTop: '1rem',
     width: '8rem',
     flexShrink: '0',
+    display: 'flex',
+    justifyContent: 'space-evenly',
+
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: '0',
+    },
   },
 }))
 
@@ -26,11 +34,12 @@ export default function StarButton({ fullName }) {
   return (
     <Button
       className={classes.root}
-      variant="contained"
-      color="primary"
+      variant="outlined"
       onClick={handleClick}
+      outlined
     >
-      {starred.includes(fullName) ? 'Starred' : 'Star'}
+      {starred.includes(fullName) ? 'Remove  ' : 'Add  '}
+      <StarIcon color="secondary" className={classes.star} />
     </Button>
   )
 }

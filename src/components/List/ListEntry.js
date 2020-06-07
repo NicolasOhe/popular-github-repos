@@ -29,6 +29,10 @@ const useStyles = makeStyles((theme) => ({
   itemContent: {
     display: 'flex',
     alignItems: 'flex-end',
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
   },
   itemDescription: {
     flexGrow: '1',
@@ -60,18 +64,20 @@ export default function ListEntry(props) {
         <span>{name}</span>
         <Chip
           className={classes.chip}
+          variant="outlined"
           label={
             <>
               <span>
                 {stargazers_count + (starred.includes(full_name) ? 1 : 0)}
               </span>
-              <StarIcon color="error" className={classes.star} />
+              <StarIcon color="secondary" className={classes.star} />
             </>
           }
         />
         {language && (
           <Chip
             component="span"
+            variant="outlined"
             className={classes.chip}
             label={<span>{language}</span>}
           />

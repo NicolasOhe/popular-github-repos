@@ -6,11 +6,11 @@ import {
 } from '@material-ui/pickers'
 import 'date-fns'
 import { useSelector, useDispatch } from 'react-redux'
-import { makeStyles, useTheme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 
 import { setSelectedDate, fetchPopularRepos } from '../../store/actions/repos'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     margin: 0,
   },

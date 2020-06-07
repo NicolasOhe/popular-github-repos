@@ -63,7 +63,11 @@ export default function App() {
           <List data={popularRepos} loading={loadingRepos} />
         </TabPanel>
         <TabPanel value={currentTab} index="favorites">
-          <List data={starredInfos} loading={loadingStarred} />
+          <List
+            data={starredInfos}
+            loading={loadingStarred}
+            noDataMessage="You haven't starred any repo yet."
+          />
         </TabPanel>
         <Copyright />
       </Box>

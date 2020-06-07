@@ -1,6 +1,5 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-
 import { List, Typography, CircularProgress } from '@material-ui/core'
 
 import ListEntry from './ListEntry'
@@ -8,10 +7,11 @@ import ListEntry from './ListEntry'
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    backgroundColor: theme.palette.background.paper,
   },
-  title: {
+  noData: {
+    marginTop: '2rem',
     marginBottom: '1rem',
+    textAlign: 'center',
   },
   progress: {
     display: 'block',
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function RepoList(props) {
-  const { data, loading } = props
+  const { data, loading, noDataMessage } = props
   const classes = useStyles()
 
   if (loading) {
@@ -31,12 +31,12 @@ export default function RepoList(props) {
   if (noData) {
     return (
       <Typography
-        component="h5"
-        variant="h5"
-        className={classes.title}
+        component="p"
+        variant="p"
+        className={classes.noData}
         color="textPrimary"
       >
-        No data.
+        {noDataMessage || 'No data.'}
       </Typography>
     )
   }

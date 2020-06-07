@@ -20,9 +20,6 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 220,
     maxWidth: 300,
   },
-  // noLabel: {
-  //   marginTop: theme.spacing(3),
-  // },
 }))
 
 // TODO: fetch availble languages from some remote source
@@ -70,6 +67,7 @@ export default function LanguagesFilter() {
         value={selectedLanguages}
         onChange={handleLanguageChange}
         input={<Input />}
+        color="secondary"
       >
         {languages.map((language) => (
           <MenuItem
