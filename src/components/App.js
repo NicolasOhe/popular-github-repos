@@ -1,39 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import { Tabs, Tab, Box, Typography, Container } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 
 import Copyright from './Copyright'
-import Settings from './Settings'
-import List from './List'
-import { fetchPopularRepos } from './store/actions/repos'
-import { initStars } from './store/actions/stars'
+import Settings from './Settings/Settings'
+import List from './List/List'
+import TabPanel from './TabPanel'
+
+import { fetchPopularRepos } from '../store/actions/repos'
+import { initStars } from '../store/actions/stars'
 
 export default function App() {
   const dispatch = useDispatch()
 
   const popularRepos = useSelector((state) => state.repos.list)
-  const loading = useSelector((state) => state.repos.loading)
+  const loadingRepos = useSelector((state) => state.repos.loading)
 
-  const starred = useSelector((state) => state.stars.starsList)
   const starredInfos = useSelector((state) => state.stars.starsInfoList)
+  const loadingStarred = useSelector((state) => state.stars.loading)
 
   useEffect(() => {
     dispatch(fetchPopularRepos())
     dispatch(initStars())
   }, [dispatch])
 
-  const classes = useStyles()
-
   const [currentTab, setCurrentTab] = useState('trending')
 
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue)
   }
-
-  const starredRepos = starredInfos.filter((el) =>
-    starred.includes(el.full_name)
-  )
 
   return (
     <Container maxWidth="md">
@@ -52,54 +47,26 @@ export default function App() {
             value="trending"
             label="Popular"
             wrapped
-            {...a11yProps('trending')}
+            id="wrapped-tab-trending"
+            aria-controls="wrapped-tabpanel-trending"
           />
           <Tab
             value="favorites"
             label="Your stars"
-            {...a11yProps('favorites')}
+            id="wrapped-tab-favorites"
+            aria-controls="wrapped-tabpanel-favorites"
           />
         </Tabs>
 
         <TabPanel value={currentTab} index="trending">
           <Settings />
-          <List data={popularRepos} loading={loading} />
+          <List data={popularRepos} loading={loadingRepos} />
         </TabPanel>
         <TabPanel value={currentTab} index="favorites">
-          <List data={starredRepos} loading={loading} />
+          <List data={starredInfos} loading={loadingStarred} />
         </TabPanel>
         <Copyright />
       </Box>
     </Container>
   )
 }
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`wrapped-tabpanel-${index}`}
-      aria-labelledby={`wrapped-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </div>
-  )
-}
-
-function a11yProps(index) {
-  return {
-    id: `wrapped-tab-${index}`,
-    'aria-controls': `wrapped-tabpanel-${index}`,
-  }
-}
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-}))

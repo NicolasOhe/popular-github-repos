@@ -1,6 +1,6 @@
 {
-  "short_name": "Your Orders",
-  "name": "Your Orders",
+  "short_name": "GitHub Stars",
+  "name": "Trending GitHup repos",
   "icons": [
     {
       "src": "favicon.ico",
