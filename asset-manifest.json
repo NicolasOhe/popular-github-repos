@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.js": "/popular-github-repos/static/js/main.a4f828bd.chunk.js",
+    "main.js.map": "/popular-github-repos/static/js/main.a4f828bd.chunk.js.map",
+    "runtime-main.js": "/popular-github-repos/static/js/runtime-main.6eb48e6c.js",
+    "runtime-main.js.map": "/popular-github-repos/static/js/runtime-main.6eb48e6c.js.map",
+    "static/js/2.2a422762.chunk.js": "/popular-github-repos/static/js/2.2a422762.chunk.js",
+    "static/js/2.2a422762.chunk.js.map": "/popular-github-repos/static/js/2.2a422762.chunk.js.map",
+    "index.html": "/popular-github-repos/index.html",
+    "precache-manifest.f6ab6d9d32fb6a4b85bfb09a786d4c33.js": "/popular-github-repos/precache-manifest.f6ab6d9d32fb6a4b85bfb09a786d4c33.js",
+    "service-worker.js": "/popular-github-repos/service-worker.js",
+    "static/js/2.2a422762.chunk.js.LICENSE.txt": "/popular-github-repos/static/js/2.2a422762.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.6eb48e6c.js",
+    "static/js/2.2a422762.chunk.js",
+    "static/js/main.a4f828bd.chunk.js"
+  ]
+}
